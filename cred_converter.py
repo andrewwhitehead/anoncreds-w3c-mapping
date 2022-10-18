@@ -137,15 +137,18 @@ def to_w3c(cred_json: dict) -> dict:
     return {
         "@context": [
             "https://www.w3.org/2018/credentials/v1",
+            "https://anoncreds.example/spec/v1",
         ],
-        "type": ["VerifiableCredential"],
+        "type": ["VerifiableCredential", "AnonCredsCredential"],
         "issuer": issuer,
-        "credentialSchema": cred_def_id,
+        "credentialSchema": {
+            "schema": schema_id,
+            "definition": cred_def_id,
+        },
         "credentialSubject": attrs,
         "proof": {
             "type": "AnonCredsProof2022",
             "encoding": "auto",
-            "schema_id": schema_id,
             "signature": signature,
         },
     }
@@ -154,8 +157,8 @@ def to_w3c(cred_json: dict) -> dict:
 def from_w3c(cred_json: dict) -> dict:
     # FIXME validate context, add error handling
 
-    cred_def_id = cred_json["credentialSchema"]
-    schema_id = cred_json["proof"]["schema_id"]
+    schema_id = cred_json["credentialSchema"]["schema"]
+    cred_def_id = cred_json["credentialSchema"]["definition"]
     attrs = cred_json["credentialSubject"]
     signature_parts = decode_w3c_signature(cred_json["proof"]["signature"])
 

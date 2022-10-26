@@ -4,6 +4,7 @@ import json
 import sys
 
 from base64 import urlsafe_b64decode, urlsafe_b64encode
+from datetime import datetime
 from hashlib import sha256
 from math import ceil
 from typing import Tuple
@@ -432,6 +433,7 @@ def to_w3c(req_json: dict, cred_json: dict) -> dict:
         ],
         "type": ["VerifiableCredential", "AnonCredsPresentation"],
         "issuer": "self",
+        "issuanceDate": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
         "credentialSubject": creds,
         "proof": {
             "type": "AnonCredsProof2022",

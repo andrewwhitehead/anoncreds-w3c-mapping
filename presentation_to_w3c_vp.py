@@ -483,6 +483,5 @@ if __name__ == "__main__":
     print(json.dumps(w3c_cred, indent=2))
 
     cmp_pres = from_w3c(w3c_cred)
-    print(json.dumps(cmp_pres, indent=2))
     if cmp_pres != input["presentation"]:
         raise SystemExit("Presentation did not round-trip successfully")

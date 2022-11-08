@@ -8,8 +8,13 @@ from datetime import datetime
 from hashlib import sha256
 from math import ceil, log2
 
-I32_BOUND = 2**31
-
+CONTEXTS = [
+    "https://www.w3.org/2018/credentials/v1",
+    (
+        "https://raw.githubusercontent.com/andrewwhitehead/"
+        "anoncreds-w3c-mapping/main/schema.json"
+    ),
+]
 
 SIGNATURE_PARTS = ["m_2", "a", "e", "v", "se", "c"]
 
@@ -21,6 +26,14 @@ def base64_encode(val: bytes) -> str:
 def base64_decode(val: str) -> bytes:
     padlen = 4 - len(val) % 4
     return urlsafe_b64decode(val if padlen > 2 else (val + "=" * padlen))
+
+
+def encode_identifier(ident: str) -> str:
+    return ident.replace(" ", "%20")
+
+
+def decode_identifier(ident: str) -> str:
+    return ident.replace("%20", " ")
 
 
 def encode_w3c_signature(cred_json: dict) -> str:
@@ -69,16 +82,19 @@ def decode_w3c_signature(signature: str) -> dict:
 def encode_indy_attrib(orig) -> str:
     """
     Encode a credential value as an int.
+
     Encode credential attribute value, purely stringifying any int32
     and leaving numeric int32 strings alone, but mapping any other
     input to a stringified 256-bit (but not 32-bit) integer.
-    Predicates in indy-sdk operate
-    on int32 values properly only when their encoded values match their raw values.
+    Predicates in indy-sdk operate on int32 values properly only when
+    their encoded values match their raw values.
+
     Args:
         orig: original value to encode
     Returns:
         encoded value
     """
+    I32_BOUND = 2**31
 
     if isinstance(orig, int) and -I32_BOUND <= orig < I32_BOUND:
         return str(int(orig))  # python bools are ints
@@ -96,32 +112,32 @@ def encode_indy_attrib(orig) -> str:
 
 
 def to_w3c(cred_json: dict) -> dict:
+    """Convert a classic AnonCreds credential to W3C-compatible format."""
     cred_def_id = cred_json["cred_def_id"]
     schema_id = cred_json["schema_id"]
     issuer = "did:sov:" + cred_def_id.split(":")[0]
     signature = encode_w3c_signature(cred_json)
-    attrs = {name: entry["raw"] for name, entry in cred_json["values"].items()}
+    attrs = {
+        name: {"value": entry["raw"]} for name, entry in cred_json["values"].items()
+    }
 
     # issues
     # - need @vocab or an additional @context entry & type
     # - limitations on attrib names, like `id` or `@type`?
 
     return {
-        "@context": [
-            "https://www.w3.org/2018/credentials/v1",
-            "https://anoncreds.example/spec/v1",
-        ],
+        "@context": CONTEXTS.copy(),
         "type": ["VerifiableCredential", "AnonCredsCredential"],
         "issuer": issuer,
         "issuanceDate": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
         "credentialSchema": {
-            "type": "AnonCredsSchema",
+            "type": "AnonCredsDefinition",
             "schema": schema_id,
             "definition": cred_def_id,
         },
-        "credentialSubject": attrs,
+        "credentialSubject": {"attribute": attrs},
         "proof": {
-            "type": "AnonCredsProof2022",
+            "type": "CLSignature2022",
             "encoding": "auto",
             "signature": signature,
         },
@@ -129,16 +145,20 @@ def to_w3c(cred_json: dict) -> dict:
 
 
 def from_w3c(cred_json: dict) -> dict:
+    """Convert a W3C-compatible credential to AnonCreds classic format."""
     # FIXME validate context, add error handling
 
     schema_id = cred_json["credentialSchema"]["schema"]
     cred_def_id = cred_json["credentialSchema"]["definition"]
-    attrs = cred_json["credentialSubject"]
+    attrs = cred_json["credentialSubject"]["attribute"]
     signature_parts = decode_w3c_signature(cred_json["proof"]["signature"])
 
     values = {}
     for name, val in attrs.items():
-        values[name] = {"raw": val, "encoded": encode_indy_attrib(val)}
+        values[name] = {
+            "raw": val["value"],
+            "encoded": encode_indy_attrib(val["value"]),
+        }
 
     return {
         "schema_id": schema_id,
@@ -158,7 +178,7 @@ def from_w3c(cred_json: dict) -> dict:
 if __name__ == "__main__":
     if len(sys.argv) < 1:
         raise SystemExit(
-            "Expected input filename, for example: testdata/ComplexProof.json"
+            "Expected input filename, for example: credentials/Credential_1.json"
         )
     input = json.load(open(sys.argv[1], "r"))
 

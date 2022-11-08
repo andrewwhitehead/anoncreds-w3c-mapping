@@ -1,7 +1,7 @@
 {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
-    "https://anoncreds.example/spec/v1"
+    "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
   ],
   "type": [
     "VerifiablePresentation",
@@ -11,87 +11,107 @@
     {
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
-        "https://anoncreds.example/spec/v1"
+        "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
       ],
       "type": [
         "VerifiableCredential",
-        "AnonCredsCredential"
+        "AnonCredsPresentation"
       ],
       "issuer": "did:sov:CsQY9MGeD3CQP4EyuVFo5m",
-      "issuanceDate": "2022-10-28T21:33:36Z",
+      "issuanceDate": "2022-11-08T19:24:11Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
-        "schema": "CsQY9MGeD3CQP4EyuVFo5m:2:MYCO Biomarker:0.0.3",
+        "schema": "CsQY9MGeD3CQP4EyuVFo5m:2:MYCO%20Biomarker:0.0.3",
         "definition": "CsQY9MGeD3CQP4EyuVFo5m:3:CL:14951:MYCO_Biomarker"
       },
       "credentialSubject": {
-        "researcher_share": "bf712cb328a92862b57f0dc806dec12a",
-        "unit": "\u03bcM",
-        "concentration": "10",
-        "name": "Iron",
-        "range": "9.00-30.0",
-        "collected_on": "2020-07-05",
-        "biomarker_id": "c9ace7dc-0485-4f3f-b466-16a27a80acf1"
+        "attribute": {
+          "researcher_share": {
+            "value": "bf712cb328a92862b57f0dc806dec12a"
+          },
+          "unit": {
+            "value": "\u03bcM"
+          },
+          "concentration": {
+            "value": "10"
+          },
+          "name": {
+            "value": "Iron"
+          },
+          "range": {
+            "value": "9.00-30.0"
+          },
+          "collected_on": {
+            "value": "2020-07-05"
+          },
+          "biomarker_id": {
+            "value": "c9ace7dc-0485-4f3f-b466-16a27a80acf1"
+          }
+        }
       },
       "proof": {
-        "type": "AnonCredsPresentationSubproof2022",
-        "encoding": "auto",
-        "index": 0,
-        "mapping": {
-          "revealedAttributes": {
-            "biomarker_attrs_0": [
-              "researcher_share",
-              "unit",
-              "concentration",
-              "name",
-              "range",
-              "collected_on",
-              "biomarker_id"
-            ]
-          }
-        },
-        "primary": {
-          "eq": "AAEBAnr2QlWJXV6EkhT-h2BNW5hYmX0VwitrytT6GRX49yVS14LyDxDU1-3CzkmvSTTZ5m3WYGUf-gm8fqJEntxgTfyum9bAzMfihaGQPzODGxKl75CRTEcOYHdHQ-3uSx21faiPbH4vrYkXcxoDUKw9oc-NYuRAaY-mes2EKAv7PXmmbAIsTWwxrfq86ea8exoxfyd9HY96yF_LeIwigowg1SHC_qdpk1jlbPk8XEC3vK77WajulVpEIEj3h_HLANIkV4-D0gJ4CSKd-cLGZdiGrXJy_OuOVJioRS0IpWw3Ohb_JJ8NKLhkSUKpjKZRYG4paUQG7lNNAMc9QPHWpCMR1QEBADmfDHTZkqi1GzjEfeVjSu63oycEdKbQamEDPM11dg_02be6cUnKOkVQ3B0JgMzWN1P-8lUkfM0syosCAX8OGuhT8_ZV1o7TKkp4vDaX43upHmYFQf0jC-XHs12W2JEQ_oMbV_tkXwv0aPUPlTLBPlB24-jD6tkawmmBDTA0ePWp3T_RCZ21lJYsDB_oiQaucplMHnxomaJNTDg7TudroYRwh3TV3NOY_gq7i25O4KqZDIIllVuVACSUIP2Yn8OmId05nsYNjEWA8gqXeDe16D7AYO4KKCrUApvahFFsNCqSr9UOEXIILN0IRTEh1KtYHF2GcrBFM6mazQc2Yey7JBVxEwGN5Lt3jGQzbcWns1U3By_VTKQt5pi0eoLuwxQr8Ma8F0q7m17AMWrQ7oyvC5NPIbkmJUldLWZ-UbEs5bWGH0I3aWUp2auXuQKGHc0q4293nQeRcVRhyuhO2qVPkfoLJJl9LZO8gpVSaGXrcbj-1i3i8dHk8euyss3Pyv-HXmgRRVoBeswB-_Jx_lJRdq90g95RdUgpHyULPsX88hUZCDSBAx8wjxphKMKjPgOSuYXP3dM2snmNy0018wMAtQANbWFzdGVyX3NlY3JldABKNpSwp1ZNhmvC5c39st9DdgBJKLrQhsr_mOhZtbZ6NVf4dwgUrcpd6WRYDW3zV-AXn1TOUh92UBgraM_1CiTKVT4tx6v38ErLatcADGNsaWVudF9zaGFyZQBKQt1xHKRmqKNS-wBRJsGlYYtLLWkn-nIa1iWij2vX-TllDxNHemndcw_2FwymDN3A0tYy-2PSORbPdFQOsRp-0sPYdyiYkEoPk8wEAErMaZdyhxg_OfqQPldHiOgS1Rd5bHg5gbgh0IpGutVzSxBRuaqYufBAz-3rkh9SngWzEFy0UhJ-bIIdWFKVWxjU3ePxv_7HoY5pUw"
+        "type": "AnonCredsPresentationProof2022",
+        "credential": {
+          "encoding": "auto",
+          "index": 0,
+          "mapping": {
+            "revealedAttributes": {
+              "biomarker_attrs_0": [
+                "researcher_share",
+                "unit",
+                "concentration",
+                "name",
+                "range",
+                "collected_on",
+                "biomarker_id"
+              ]
+            }
+          },
+          "eqProof": "AAEBAnr2QlWJXV6EkhT-h2BNW5hYmX0VwitrytT6GRX49yVS14LyDxDU1-3CzkmvSTTZ5m3WYGUf-gm8fqJEntxgTfyum9bAzMfihaGQPzODGxKl75CRTEcOYHdHQ-3uSx21faiPbH4vrYkXcxoDUKw9oc-NYuRAaY-mes2EKAv7PXmmbAIsTWwxrfq86ea8exoxfyd9HY96yF_LeIwigowg1SHC_qdpk1jlbPk8XEC3vK77WajulVpEIEj3h_HLANIkV4-D0gJ4CSKd-cLGZdiGrXJy_OuOVJioRS0IpWw3Ohb_JJ8NKLhkSUKpjKZRYG4paUQG7lNNAMc9QPHWpCMR1QEBADmfDHTZkqi1GzjEfeVjSu63oycEdKbQamEDPM11dg_02be6cUnKOkVQ3B0JgMzWN1P-8lUkfM0syosCAX8OGuhT8_ZV1o7TKkp4vDaX43upHmYFQf0jC-XHs12W2JEQ_oMbV_tkXwv0aPUPlTLBPlB24-jD6tkawmmBDTA0ePWp3T_RCZ21lJYsDB_oiQaucplMHnxomaJNTDg7TudroYRwh3TV3NOY_gq7i25O4KqZDIIllVuVACSUIP2Yn8OmId05nsYNjEWA8gqXeDe16D7AYO4KKCrUApvahFFsNCqSr9UOEXIILN0IRTEh1KtYHF2GcrBFM6mazQc2Yey7JBVxEwGN5Lt3jGQzbcWns1U3By_VTKQt5pi0eoLuwxQr8Ma8F0q7m17AMWrQ7oyvC5NPIbkmJUldLWZ-UbEs5bWGH0I3aWUp2auXuQKGHc0q4293nQeRcVRhyuhO2qVPkfoLJJl9LZO8gpVSaGXrcbj-1i3i8dHk8euyss3Pyv-HXmgRRVoBeswB-_Jx_lJRdq90g95RdUgpHyULPsX88hUZCDSBAx8wjxphKMKjPgOSuYXP3dM2snmNy0018wMAtQANbWFzdGVyX3NlY3JldABKNpSwp1ZNhmvC5c39st9DdgBJKLrQhsr_mOhZtbZ6NVf4dwgUrcpd6WRYDW3zV-AXn1TOUh92UBgraM_1CiTKVT4tx6v38ErLatcADGNsaWVudF9zaGFyZQBKQt1xHKRmqKNS-wBRJsGlYYtLLWkn-nIa1iWij2vX-TllDxNHemndcw_2FwymDN3A0tYy-2PSORbPdFQOsRp-0sPYdyiYkEoPk8wEAErMaZdyhxg_OfqQPldHiOgS1Rd5bHg5gbgh0IpGutVzSxBRuaqYufBAz-3rkh9SngWzEFy0UhJ-bIIdWFKVWxjU3ePxv_7HoY5pUw"
         }
       }
     },
     {
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
-        "https://anoncreds.example/spec/v1"
+        "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
       ],
       "type": [
         "VerifiableCredential",
-        "AnonCredsCredential"
+        "AnonCredsPresentation"
       ],
       "issuer": "did:sov:TUku9MDGa7QALbAJX4oAww",
-      "issuanceDate": "2022-10-28T21:33:36Z",
+      "issuanceDate": "2022-11-08T19:24:11Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
-        "schema": "FbozHyf7j5q7TDn2s8MXZN:2:MYCO Consent Enablement:0.1.0",
+        "schema": "FbozHyf7j5q7TDn2s8MXZN:2:MYCO%20Consent%20Enablement:0.1.0",
         "definition": "TUku9MDGa7QALbAJX4oAww:3:CL:531757:MYCO_Consent_Enablement"
       },
       "credentialSubject": {
-        "jti_unique_identifier": "205b1ea0-7848-48d4-b52b-339122d84f62"
+        "attribute": {
+          "jti_unique_identifier": {
+            "value": "205b1ea0-7848-48d4-b52b-339122d84f62"
+          }
+        }
       },
       "proof": {
-        "type": "AnonCredsPresentationSubproof2022",
-        "encoding": "auto",
-        "index": 1,
-        "mapping": {
-          "revealedAttributes": {
-            "consent_attrs": "jti_unique_identifier"
-          }
-        },
-        "primary": {
-          "eq": "AAEBAaJ19hG1ctE6MUCRF4ZxAFUfk5LImKIcQkKpT5hRNYLBaYWiJbgKRCV3H1PG9d53Oe4nzugeCCg26tNW6zUe1TOIXR1b70NIOXm5T4-AXzw_Qpxa4NnLDYPuEWxcXg3kNn29Ut0ozJEviwGx9FWW878PoR09SH2OzaXGvpAWZ8ZTFlt2MUA5d6_9QEV-jjK52aQQgC7J2Kf1qOUOcbtWYdd5j6sotyQyRPp6-_LzUCbstkS-SqzjV-oBAFq83TBcc0YtBvH91BngNJmpwmydvogcLzecWtd9l06vWWRN_Ve9Mt6edA5ofyQA2uDtCwg06ZqsBBq2BAzKe6VxmF-agSABADk3gQhGDchPC0eanv6DNVaQ3dlmhD6dljbiBxpxnAGmfEvcy7UQJgkFWPpU7kCHFZbRLtpHZrfnIm0CAX8CdS36H3jtUA_JFQRnW1Uc2XuWAjh3QYuQ8M09VMuhja6AqyARhpt_p-vHSraSap1c91H7WBwxbf5on13mX8jfLhy4bBcBE0eH94k2tq6gQeSzn2csCD8I9kyGojZkvADdVVBSnAOwFtE6ocMIGhgPF2L4r1X324DCMjr1HcAVUy79e0msgOPGpXkSsdHDOAcK7RA3SXg4choe3JAce-EGOB2tMyo1TL1jQckGKmcp4NgqC9JClpYaqvGscwijmwz4a1CePtbhcHqtC3AP0n8mYzsZNaDqo6HSXn-jqpxN3ZN-4ID3FE3Y-eGkikf5K7YMbEMeD-RKhKDeCiW5pUlHafOlw-yljmusm7mCsVJkIIB9F7N7M51zKJFbvSq1RQfejlQcQKSstwMNaVpieDR4S_5fNXxDavgLfJwldZUFHk8Xfgb6ib4H4qfSMTeSmO_GlV6GlC19sZcW_mDeOlg8Ai2M4x8iy_3xgPZ5xYq3n4KcRXM69zWicLmluFCA6gMEfAAVaWF0X2NvbnNlbnRfdGltZXN0YW1wAEp9EuGn8-es9xA-0M13816a39BNhz5OiQBoowNKe-dTh5Yw7K7rRa_YSjBHWEVY6q_KyBzqL7Io1BEppOIswkBfWhVYgGEtPepkdwANbWFzdGVyX3NlY3JldABKNpSwp1ZNhmvC5c39st9DdgBJKLrQhsr_mOhZtbZ6NVf4dwgUrcpd6WRYDW3zV-AXn1TOUh92UBgraM_1CiTKVT4tx6v38ErLatcAD2RhdGFfY29udHJvbGxlcgBK_dAJ27qv3UR8oabLOYMx2hXSh3ey4E8ar07JXSfykkVCc1rgm9qH6q0PDSieQOy2L7fz6Hpxiv7RPo1hRDMovmtUdiFjxgoWK9UABm5vdGljZQBKLBLtaMjd6A24-5_qwEimjqnzTEG8Y7X4Q2_8L31cix_8g88FzTQXDn5gftifpWiFGwMLTI9BMaQNl9RAOpUj31i6c6-3pnovyIUACXNlbnNpdGl2ZQBK1gxlDy5a3WVkfR9J7CsFORShzfUbTPLpL76jVrnQYN1DMcEfOVi8LPXKVUgPUmwbMo0m2sxQ63G8xE49hBiofzXX_HDhuAgKe-sACHNlcnZpY2VzAErqtY3y7uBr9HSOWcEwlMcFM8Gi-XN8QvS5kuPEyyhkKOGJ4CKDYrc31Ch_80Ly5LubGLbL38-rd0XB8o2oxPAgjO83HgdIhFZ_hQAWc3ViX3N1YmplY3RfaWRlbnRpZmllcgBKuVtqPAxNbTywD65SJoHo-_DLMAKxP3kKxrvpmFPCTDDSa64J3ox99v88YkJX-Zy2SsQ53crmp1dkSOdBnxmm-731ylVYHZ3p3O0AGG1vY19tZXRob2Rfb2ZfY29sbGVjdGlvbgBKnlpT2EwTHTQ1Ab-L42u17GnM9MnX7tBRAGOgKCJDnup8u-96Y_kJQtgkzogIxnvc7K16fUequwTQ72C1xAMI7SPm4I-Lqakyy4kAHGp1cmlzZGljdGlvbl9kYXRhX3Byb2Nlc3NpbmcASvn__VuPw8WFAYjOmBl_EN6Cu_S8tiKZTBmBnhR6cm5Frn353ow7tbzQX6P53LnMzs8fAynhiSQT5ioRBHRtR5NAIsG44iVC9iUmABtpc3NfaW50ZXJuZXRfcHJvY2Vzc2luZ191cmkASmz9H8nALYor0NYdLcMqrUycFpNiS3k1tRNYQTr_0thtTY9m_MhFNYwWp8e5uXtqVem_qlKW8wL6fkwC9tEje_mJPPsPc4ztXKbEAB12ZXJzaW9uX2NvbnNlbnRfc3BlY2lmaWNhdGlvbgBKeyGh1pJ-ux8al2eENRJ0PgbmT2TVy2ab9_pwMp4NVCED-CQHFh3Wd7T7Sy64Vl35UrXXzsWm_Q08LwAeeOdGoZY_tQH_jKIZXYEACnBvbGljeV91cmwASsFXPFTDatFgiveyss9eGefRI3czecVaZRklTaq_Hd7kP4AQvrE3q450LvuG8XtqtyxiDIXZSPfJ9yxRwzri2Dt57BeK1L8tJqYxBABKZs2MpyOyxshiglchyhYfh5jD7fx6pYajVitQ3FUrF8BqvQGJOBfZYPB19O62RjgOBPMiCk4W1HPqK2QpBgPY4hzwyutfHssNn5k"
+        "type": "AnonCredsPresentationProof2022",
+        "credential": {
+          "encoding": "auto",
+          "index": 1,
+          "mapping": {
+            "revealedAttributes": {
+              "consent_attrs": "jti_unique_identifier"
+            }
+          },
+          "eqProof": "AAEBAaJ19hG1ctE6MUCRF4ZxAFUfk5LImKIcQkKpT5hRNYLBaYWiJbgKRCV3H1PG9d53Oe4nzugeCCg26tNW6zUe1TOIXR1b70NIOXm5T4-AXzw_Qpxa4NnLDYPuEWxcXg3kNn29Ut0ozJEviwGx9FWW878PoR09SH2OzaXGvpAWZ8ZTFlt2MUA5d6_9QEV-jjK52aQQgC7J2Kf1qOUOcbtWYdd5j6sotyQyRPp6-_LzUCbstkS-SqzjV-oBAFq83TBcc0YtBvH91BngNJmpwmydvogcLzecWtd9l06vWWRN_Ve9Mt6edA5ofyQA2uDtCwg06ZqsBBq2BAzKe6VxmF-agSABADk3gQhGDchPC0eanv6DNVaQ3dlmhD6dljbiBxpxnAGmfEvcy7UQJgkFWPpU7kCHFZbRLtpHZrfnIm0CAX8CdS36H3jtUA_JFQRnW1Uc2XuWAjh3QYuQ8M09VMuhja6AqyARhpt_p-vHSraSap1c91H7WBwxbf5on13mX8jfLhy4bBcBE0eH94k2tq6gQeSzn2csCD8I9kyGojZkvADdVVBSnAOwFtE6ocMIGhgPF2L4r1X324DCMjr1HcAVUy79e0msgOPGpXkSsdHDOAcK7RA3SXg4choe3JAce-EGOB2tMyo1TL1jQckGKmcp4NgqC9JClpYaqvGscwijmwz4a1CePtbhcHqtC3AP0n8mYzsZNaDqo6HSXn-jqpxN3ZN-4ID3FE3Y-eGkikf5K7YMbEMeD-RKhKDeCiW5pUlHafOlw-yljmusm7mCsVJkIIB9F7N7M51zKJFbvSq1RQfejlQcQKSstwMNaVpieDR4S_5fNXxDavgLfJwldZUFHk8Xfgb6ib4H4qfSMTeSmO_GlV6GlC19sZcW_mDeOlg8Ai2M4x8iy_3xgPZ5xYq3n4KcRXM69zWicLmluFCA6gMEfAAVaWF0X2NvbnNlbnRfdGltZXN0YW1wAEp9EuGn8-es9xA-0M13816a39BNhz5OiQBoowNKe-dTh5Yw7K7rRa_YSjBHWEVY6q_KyBzqL7Io1BEppOIswkBfWhVYgGEtPepkdwANbWFzdGVyX3NlY3JldABKNpSwp1ZNhmvC5c39st9DdgBJKLrQhsr_mOhZtbZ6NVf4dwgUrcpd6WRYDW3zV-AXn1TOUh92UBgraM_1CiTKVT4tx6v38ErLatcAD2RhdGFfY29udHJvbGxlcgBK_dAJ27qv3UR8oabLOYMx2hXSh3ey4E8ar07JXSfykkVCc1rgm9qH6q0PDSieQOy2L7fz6Hpxiv7RPo1hRDMovmtUdiFjxgoWK9UABm5vdGljZQBKLBLtaMjd6A24-5_qwEimjqnzTEG8Y7X4Q2_8L31cix_8g88FzTQXDn5gftifpWiFGwMLTI9BMaQNl9RAOpUj31i6c6-3pnovyIUACXNlbnNpdGl2ZQBK1gxlDy5a3WVkfR9J7CsFORShzfUbTPLpL76jVrnQYN1DMcEfOVi8LPXKVUgPUmwbMo0m2sxQ63G8xE49hBiofzXX_HDhuAgKe-sACHNlcnZpY2VzAErqtY3y7uBr9HSOWcEwlMcFM8Gi-XN8QvS5kuPEyyhkKOGJ4CKDYrc31Ch_80Ly5LubGLbL38-rd0XB8o2oxPAgjO83HgdIhFZ_hQAWc3ViX3N1YmplY3RfaWRlbnRpZmllcgBKuVtqPAxNbTywD65SJoHo-_DLMAKxP3kKxrvpmFPCTDDSa64J3ox99v88YkJX-Zy2SsQ53crmp1dkSOdBnxmm-731ylVYHZ3p3O0AGG1vY19tZXRob2Rfb2ZfY29sbGVjdGlvbgBKnlpT2EwTHTQ1Ab-L42u17GnM9MnX7tBRAGOgKCJDnup8u-96Y_kJQtgkzogIxnvc7K16fUequwTQ72C1xAMI7SPm4I-Lqakyy4kAHGp1cmlzZGljdGlvbl9kYXRhX3Byb2Nlc3NpbmcASvn__VuPw8WFAYjOmBl_EN6Cu_S8tiKZTBmBnhR6cm5Frn353ow7tbzQX6P53LnMzs8fAynhiSQT5ioRBHRtR5NAIsG44iVC9iUmABtpc3NfaW50ZXJuZXRfcHJvY2Vzc2luZ191cmkASmz9H8nALYor0NYdLcMqrUycFpNiS3k1tRNYQTr_0thtTY9m_MhFNYwWp8e5uXtqVem_qlKW8wL6fkwC9tEje_mJPPsPc4ztXKbEAB12ZXJzaW9uX2NvbnNlbnRfc3BlY2lmaWNhdGlvbgBKeyGh1pJ-ux8al2eENRJ0PgbmT2TVy2ab9_pwMp4NVCED-CQHFh3Wd7T7Sy64Vl35UrXXzsWm_Q08LwAeeOdGoZY_tQH_jKIZXYEACnBvbGljeV91cmwASsFXPFTDatFgiveyss9eGefRI3czecVaZRklTaq_Hd7kP4AQvrE3q450LvuG8XtqtyxiDIXZSPfJ9yxRwzri2Dt57BeK1L8tJqYxBABKZs2MpyOyxshiglchyhYfh5jD7fx6pYajVitQ3FUrF8BqvQGJOBfZYPB19O62RjgOBPMiCk4W1HPqK2QpBgPY4hzwyutfHssNn5k"
         }
       }
     }
   ],
   "proof": {
-    "type": "AnonCredsAggregateProof2022",
+    "type": "AnonCredsPresentationProof2022",
     "nonce": "182453895158932070575246",
-    "data": "AAAgtMR4DrkY--ZVgKHmUANE04ET7TzUxZ0vZmVcNt4nCkwBABUACQJ69kJVIxHVAQAIAaJ19l-agSA"
+    "aggregated": "AAAgtMR4DrkY--ZVgKHmUANE04ET7TzUxZ0vZmVcNt4nCkwBABUACQJ69kJVIxHVAQAIAaJ19l-agSA"
   }
 }

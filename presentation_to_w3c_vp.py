@@ -10,20 +10,34 @@ from math import ceil
 from typing import Tuple
 
 
+CONTEXTS = [
+    "https://www.w3.org/2018/credentials/v1",
+    (
+        "https://raw.githubusercontent.com/andrewwhitehead/"
+        "anoncreds-w3c-mapping/main/schema.json"
+    ),
+]
+
+EQ_PROOF_PARTS = ["a_prime", "e", "v", "m", "m2"]
+GE_PROOF_PARTS = ["u", "r", "mj", "alpha", "t"]
+GE_NUMBER_PARTS = ["0", "1", "2", "3", "DELTA"]
+
+
 def encode_indy_attrib(orig) -> str:
     """
     Encode a credential value as an int.
+
     Encode credential attribute value, purely stringifying any int32
     and leaving numeric int32 strings alone, but mapping any other
     input to a stringified 256-bit (but not 32-bit) integer.
-    Predicates in indy-sdk operate
-    on int32 values properly only when their encoded values match their raw values.
+    Predicates in indy-sdk operate on int32 values properly only when
+    their encoded values match their raw values.
+
     Args:
         orig: original value to encode
     Returns:
         encoded value
     """
-
     I32_BOUND = 2**31
 
     if isinstance(orig, int) and -I32_BOUND <= orig < I32_BOUND:
@@ -41,16 +55,17 @@ def encode_indy_attrib(orig) -> str:
     return str(rv)
 
 
-def encode_credentials(req_json: dict, cred_json: dict, proofs: list) -> list:
+def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
+    """Re-encode the credentials contained in the presentation."""
     if (
-        "proof" not in cred_json
-        or "proofs" not in cred_json["proof"]
-        or "requested_proof" not in cred_json
+        "proof" not in pres_json
+        or "proofs" not in pres_json["proof"]
+        or "requested_proof" not in pres_json
     ):
         raise Exception("invalid presentation")
 
     creds = []
-    req_proof = cred_json["requested_proof"]
+    req_proof = pres_json["requested_proof"]
     req_attr_map = {}
     req_pred_map = req_json.get("requested_predicates", {})
 
@@ -72,32 +87,30 @@ def encode_credentials(req_json: dict, cred_json: dict, proofs: list) -> list:
         return idx
 
     for idx in range(len(proofs)):
-        idents = cred_json["identifiers"][idx]
+        idents = pres_json["identifiers"][idx]
         issuer = "did:sov:" + idents["cred_def_id"].split(":")[0]
-        creds.append(
-            {
-                "@context": [
-                    "https://www.w3.org/2018/credentials/v1",
-                    "https://anoncreds.example/spec/v1",
-                ],
-                "type": ["VerifiableCredential", "AnonCredsCredential"],
-                "issuer": issuer,
-                "issuanceDate": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "credentialSchema": {
-                    "type": "AnonCredsDefinition",
-                    "schema": idents["schema_id"],
-                    "definition": idents["cred_def_id"],
-                },
-                "credentialSubject": {},
-                "proof": {
-                    "type": "AnonCredsPresentationSubproof2022",
+        cred = {
+            "@context": CONTEXTS.copy(),
+            "type": ["VerifiableCredential", "AnonCredsPresentation"],
+            "issuer": issuer,
+            "issuanceDate": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "credentialSchema": {
+                "type": "AnonCredsDefinition",
+                "schema": encode_identifier(idents["schema_id"]),
+                "definition": encode_identifier(idents["cred_def_id"]),
+            },
+            "credentialSubject": {"attribute": {}},
+            "proof": {
+                "type": "AnonCredsPresentationProof2022",
+                "credential": {
                     "encoding": "auto",
                     "index": idx,
                     "mapping": {},
-                    "primary": proofs[idx],
                 },
-            }
-        )
+            },
+        }
+        cred["proof"]["credential"].update(proofs[idx])
+        creds.append(cred)
 
     for reft, attr in req_proof.get("revealed_attrs", {}).items():
         idx = _check_index(attr["sub_proof_index"])
@@ -105,10 +118,12 @@ def encode_credentials(req_json: dict, cred_json: dict, proofs: list) -> list:
             raise Exception(f"Unknown attribute referent: {reft}")
         if not isinstance(req_attr_map[reft], str):
             raise Exception(f"Expected single name for attribute referent: {reft}")
-        creds[idx]["credentialSubject"][req_attr_map[reft]] = attr["raw"]
-        creds[idx]["proof"]["mapping"].setdefault("revealedAttributes", {})[
-            reft
-        ] = req_attr_map[reft]
+        creds[idx]["credentialSubject"]["attribute"][req_attr_map[reft]] = {
+            "value": attr["raw"]
+        }
+        creds[idx]["proof"]["credential"]["mapping"].setdefault(
+            "revealedAttributes", {}
+        )[reft] = req_attr_map[reft]
 
     for reft, group in req_proof.get("revealed_attr_groups", {}).items():
         idx = _check_index(group["sub_proof_index"])
@@ -121,11 +136,11 @@ def encode_credentials(req_json: dict, cred_json: dict, proofs: list) -> list:
         for name, attr in group["values"].items():
             if name not in req_names:
                 raise Exception(f"Unexpected attribute name: {name}")
-            creds[idx]["credentialSubject"][name] = attr["raw"]
+            creds[idx]["credentialSubject"]["attribute"][name] = {"value": attr["raw"]}
             mapping.append(name)
-        creds[idx]["proof"]["mapping"].setdefault("revealedAttributes", {})[
-            reft
-        ] = mapping
+        creds[idx]["proof"]["credential"]["mapping"].setdefault(
+            "revealedAttributes", {}
+        )[reft] = mapping
 
     for reft, group in req_proof.get("unrevealed_attrs", {}).items():
         idx = _check_index(group["sub_proof_index"])
@@ -133,9 +148,9 @@ def encode_credentials(req_json: dict, cred_json: dict, proofs: list) -> list:
             raise Exception(f"Unknown attribute referent: {reft}")
         if not isinstance(req_attr_map[reft], str):
             raise Exception(f"Expected single name for attribute referent: {reft}")
-        creds[idx]["proof"]["mapping"].setdefault("unrevealedAttributes", {})[
-            reft
-        ] = req_attr_map[reft]
+        creds[idx]["proof"]["credential"]["mapping"].setdefault(
+            "unrevealedAttributes", {}
+        )[reft] = req_attr_map[reft]
 
     pred_idx = 0
     for reft, group in req_proof.get("predicates", {}).items():
@@ -143,7 +158,9 @@ def encode_credentials(req_json: dict, cred_json: dict, proofs: list) -> list:
         if reft not in req_pred_map:
             raise Exception(f"Unknown predicate referent: {reft}")
         req_pred = req_pred_map[reft]
-        creds[idx]["proof"]["mapping"].setdefault("requestedPredicates", {})[reft] = {
+        creds[idx]["proof"]["credential"]["mapping"].setdefault(
+            "requestedPredicates", {}
+        )[reft] = {
             "index": pred_idx,
             "attr_name": req_pred["name"],
             "p_type": req_pred["p_type"],
@@ -152,14 +169,9 @@ def encode_credentials(req_json: dict, cred_json: dict, proofs: list) -> list:
 
     self_attest = req_proof.get("self_attested_attrs")
     if self_attest:
-        creds[idx]["proof"]["selfAttestedAttributes"] = self_attest
+        creds[idx]["proof"]["credential"]["selfAttestedAttributes"] = self_attest
 
     return creds
-
-
-EQ_PROOF_PARTS = ["a_prime", "e", "v", "m", "m2"]
-GE_PROOF_PARTS = ["u", "r", "mj", "alpha", "t"]
-GE_NUMBER_PARTS = ["0", "1", "2", "3", "DELTA"]
 
 
 def base64_encode(val: bytes) -> str:
@@ -175,15 +187,6 @@ def encode_bytes(val: bytes) -> bytes:
     return len(val).to_bytes(2, "big") + val
 
 
-def encode_int(val: int) -> bytes:
-    if isinstance(val, str):
-        val = int(val)
-    assert val >= 0
-    int_len = ceil(val.bit_length() / 8)
-    int_bytes = val.to_bytes(int_len, "big")
-    return int_len.to_bytes(2, "big") + int_bytes
-
-
 def decode_bytes(val: bytes) -> Tuple[bytes, bytes]:
     lv = len(val)
     if lv < 2:
@@ -196,9 +199,26 @@ def decode_bytes(val: bytes) -> Tuple[bytes, bytes]:
     return val[2:end], val[end:]
 
 
+def encode_int(val: int) -> bytes:
+    if isinstance(val, str):
+        val = int(val)
+    assert val >= 0
+    int_len = ceil(val.bit_length() / 8)
+    int_bytes = val.to_bytes(int_len, "big")
+    return int_len.to_bytes(2, "big") + int_bytes
+
+
 def decode_int(val: bytes) -> Tuple[int, bytes]:
     (ibytes, remain) = decode_bytes(val)
     return int.from_bytes(ibytes, "big"), remain
+
+
+def encode_identifier(ident: str) -> str:
+    return ident.replace(" ", "%20")
+
+
+def decode_identifier(ident: str) -> str:
+    return ident.replace("%20", " ")
 
 
 def encode_eq_proof(eq_proof: dict) -> str:
@@ -224,8 +244,10 @@ def encode_eq_proof(eq_proof: dict) -> str:
 def decode_eq_proof(eq_proof: str, subject: dict) -> dict:
     entries = {
         "revealed_attrs": {
-            attr: encode_indy_attrib(val)
-            for (attr, val) in subject.get("credentialSubject", {}).items()
+            attr: encode_indy_attrib(val["value"])
+            for (attr, val) in subject.get("credentialSubject", {})
+            .get("attribute")
+            .items()
         }
     }
 
@@ -293,34 +315,34 @@ def decode_ge_proof(ge_proof: str) -> dict:
     return entries
 
 
-def encode_credential_proofs(cred_json: dict) -> str:
+def encode_credential_proofs(pres_json: dict) -> str:
     proofs = []
-    for pres_proof in cred_json["proof"]["proofs"]:
+    for pres_proof in pres_json["proof"]["proofs"]:
         proof = {}
 
         pres_primary = pres_proof["primary_proof"]
-        proof["eq"] = encode_eq_proof(pres_primary["eq_proof"])
+        proof["eqProof"] = encode_eq_proof(pres_primary["eq_proof"])
         ge_proofs = pres_primary.get("ge_proofs")
         if ge_proofs:
-            proof["ge"] = list(map(encode_ge_proof, ge_proofs))
+            proof["geProof"] = list(map(encode_ge_proof, ge_proofs))
 
         proofs.append(proof)
 
     return proofs
 
 
-def encode_aggregated_proof(cred_json: dict) -> str:
-    pres_proof = cred_json["proof"]["aggregated_proof"]
+def encode_aggregated_proof(pres_json: dict) -> str:
+    pres_proof = pres_json["proof"]["aggregated_proof"]
     c_hash = encode_int(pres_proof["c_hash"])
     c_list = b"".join(encode_bytes(bytes(b)) for b in pres_proof["c_list"])
     return base64_encode(bytes((0,)) + c_hash + bytes((1,)) + encode_bytes(c_list))
 
 
-def decode_aggregated_proof(cred_json: dict) -> str:
+def decode_aggregated_proof(pres_json: dict) -> str:
     c_hash = None
     c_list = None
 
-    pres_proof = base64_decode(cred_json["proof"]["data"])
+    pres_proof = base64_decode(pres_json["proof"]["aggregated"])
     while pres_proof:
         pfx = pres_proof[0]
         if pfx == 0:
@@ -343,11 +365,13 @@ def map_predicate_operator(op: str) -> str:
     return op
 
 
-def decode_credential_proof(cred_json: dict) -> dict:
+def decode_credential_proof(pres_json: dict) -> dict:
     subjects = {}
-    # FIXME could be a single object instead of a list
-    for entry in cred_json["verifiableCredential"]:
-        subjects[entry["proof"]["index"]] = entry
+    cred_list = pres_json["verifiableCredential"]
+    if isinstance(cred_list, dict):
+        cred_list = [cred_list]
+    for entry in cred_list:
+        subjects[entry["proof"]["credential"]["index"]] = entry
     cred_count = max(subjects.keys()) + 1
 
     proofs = []
@@ -362,14 +386,15 @@ def decode_credential_proof(cred_json: dict) -> dict:
 
     for idx in range(cred_count):
         subj = subjects[idx]
-        pres_proof = subj["proof"]["primary"]
-        eq = decode_eq_proof(pres_proof["eq"], subj)
+        pres_proof = subj["proof"]["credential"]
+        mapping = pres_proof["mapping"]
+        eq = decode_eq_proof(pres_proof["eqProof"], subj)
         proof = {"primary_proof": {"eq_proof": eq, "ge_proofs": []}}
 
-        ge_proofs = pres_proof.get("ge")
+        ge_proofs = pres_proof.get("geProof")
         if ge_proofs:
             predicates = {}
-            for reft, pred in subj["proof"]["mapping"]["requestedPredicates"].items():
+            for reft, pred in mapping["requestedPredicates"].items():
                 predicates[pred["index"]] = pred
             for idx, ge_proof in enumerate(ge_proofs):
                 ge_proof = decode_ge_proof(ge_proof)
@@ -385,19 +410,22 @@ def decode_credential_proof(cred_json: dict) -> dict:
 
         identifiers.append(
             {
-                "schema_id": subj["credentialSchema"]["schema"],
-                "cred_def_id": subj["credentialSchema"]["definition"],
+                "schema_id": decode_identifier(subj["credentialSchema"]["schema"]),
+                "cred_def_id": decode_identifier(
+                    subj["credentialSchema"]["definition"]
+                ),
             }
         )
 
-        mapping = subj["proof"]["mapping"]
         for reft, attr_names in mapping.get("revealedAttributes", {}).items():
             if isinstance(attr_names, list):
                 values = {}
                 for attr in attr_names:
                     values[attr] = {
-                        "raw": subj["credentialSubject"][attr],
-                        "encoded": encode_indy_attrib(subj["credentialSubject"][attr]),
+                        "raw": subj["credentialSubject"]["attribute"][attr]["value"],
+                        "encoded": encode_indy_attrib(
+                            subj["credentialSubject"]["attribute"][attr]["value"]
+                        ),
                     }
                 requested["revealed_attr_groups"][reft] = {
                     "sub_proof_index": idx,
@@ -406,9 +434,9 @@ def decode_credential_proof(cred_json: dict) -> dict:
             elif isinstance(attr_names, str):
                 requested["revealed_attrs"][reft] = {
                     "sub_proof_index": idx,
-                    "raw": subj["credentialSubject"][attr_names],
+                    "raw": subj["credentialSubject"]["attribute"][attr_names]["value"],
                     "encoded": encode_indy_attrib(
-                        subj["credentialSubject"][attr_names]
+                        subj["credentialSubject"]["attribute"][attr_names]["value"]
                     ),
                 }
             else:
@@ -431,42 +459,41 @@ def decode_credential_proof(cred_json: dict) -> dict:
     return {
         "proof": {
             "proofs": proofs,
-            "aggregated_proof": decode_aggregated_proof(cred_json),
+            "aggregated_proof": decode_aggregated_proof(pres_json),
         },
         "requested_proof": requested,
         "identifiers": identifiers,
     }
 
 
-def to_w3c(req_json: dict, cred_json: dict) -> dict:
-    proofs = encode_credential_proofs(cred_json)
-    creds = encode_credentials(req_json, cred_json, proofs)
-    agg = encode_aggregated_proof(cred_json)
+def to_w3c(req_json: dict, pres_json: dict) -> dict:
+    """Convert a classic AnonCreds presentation to W3C-compatible format."""
+    proofs = encode_credential_proofs(pres_json)
+    creds = encode_credentials(req_json, pres_json, proofs)
+    agg = encode_aggregated_proof(pres_json)
 
     return {
-        "@context": [
-            "https://www.w3.org/2018/credentials/v1",
-            "https://anoncreds.example/spec/v1",
-        ],
+        "@context": CONTEXTS.copy(),
         "type": ["VerifiablePresentation", "AnonCredsPresentation"],
         # "holder": { .. },
         "verifiableCredential": creds,
         "proof": {
-            "type": "AnonCredsAggregateProof2022",
+            "type": "AnonCredsPresentationProof2022",
             "nonce": req_json["nonce"],
-            "data": agg,
+            "aggregated": agg,
         },
     }
 
 
-def from_w3c(cred_json: dict) -> dict:
-    return decode_credential_proof(cred_json)
+def from_w3c(pres_json: dict) -> dict:
+    """Convert a W3C-compatible presentation to AnonCreds classic format."""
+    return decode_credential_proof(pres_json)
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 1:
         raise SystemExit(
-            "Expected input filename, for example: testdata/ComplexProof.json"
+            "Expected input filename, for example: presentations/ComplexProof.json"
         )
     input = json.load(open(sys.argv[1], "r"))
 
@@ -479,9 +506,9 @@ if __name__ == "__main__":
             "Expected a JSON object with 'presentation' and 'presentation_request' keys"
         )
 
-    w3c_cred = to_w3c(input["presentation_request"], input["presentation"])
-    print(json.dumps(w3c_cred, indent=2))
+    w3c_pres = to_w3c(input["presentation_request"], input["presentation"])
+    print(json.dumps(w3c_pres, indent=2))
 
-    cmp_pres = from_w3c(w3c_cred)
+    cmp_pres = from_w3c(w3c_pres)
     if cmp_pres != input["presentation"]:
         raise SystemExit("Presentation did not round-trip successfully")

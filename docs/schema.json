@@ -88,6 +88,10 @@
       "aggregated": {
         "@id": "ac:aggregatedProof",
         "@type": "xsd:string"
+      },
+      "nonce": {
+        "@id": "ac:nonce",
+        "@type": "xsd:string"
       }
     }
   },

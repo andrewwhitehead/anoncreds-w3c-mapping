@@ -1,0 +1,115 @@
+{
+  "@version": 1.1,
+  "@protected": true,
+  "ac": "https://anoncreds.example/2022/ns#",
+  "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+  "attribute": {
+    "@id": "ac:attribute",
+    "@container": ["@index", "@set"],
+    "@index": "https://anoncreds.example/2022/ns#attributeName",
+    "@context": {
+      "@version": 1.1,
+      "@protected": true,
+      "name": {
+        "@id": "ac:attributeName",
+        "@type": "xsd:string"
+      },
+      "encoding": {
+        "@id": "ac:attributeEncoding",
+        "@type": "@id"
+      },
+      "value": {
+        "@id": "ac:attributeValue",
+        "@type": "xsd:string"
+      }
+    }
+  },
+
+  "AnonCredsCredential": "ac:AnonCredsCredential",
+
+  "AnonCredsDefinition": {
+    "@id": "ac:AnonCredsDefinition",
+    "@context": {
+      "@version": 1.1,
+      "@protected": true,
+      "schema": {
+        "@id": "ac:schema",
+        "@type": "@id"
+      },
+      "definition": {
+        "@id": "ac:definition",
+        "@type": "@id"
+      }
+    }
+  },
+
+  "AnonCredsPresentation": "ac:AnonCredsPresentation",
+
+  "AnonCredsPresentationProof2022": {
+    "@id": "ac:AnonCredsPresentationProof2022",
+    "@context": {
+      "@version": 1.1,
+      "@protected": true,
+      "credential": {
+        "@id": "ac:credentialProof",
+        "@context": {
+          "@version": 1.1,
+          "@protected": true,
+          "encoding": {
+            "@id": "ac:attributeEncoding",
+            "@type": "@vocab",
+            "@context": {
+              "@version": 1.1,
+              "@protected": true,
+              "auto": "ac:autoEncoding"
+            }
+          },
+          "index": {
+            "@id": "ac:index",
+            "@type": "xsd:integer",
+            "@nest": "primary"
+          },
+          "mapping": {
+            "@id": "ac:attributeMapping",
+            "@type": "@json"
+          },
+          "eqProof": {
+            "@id": "ac:eqProof",
+            "@type": "xsd:string"
+          },
+          "geProof": {
+            "@id": "ac:geProof",
+            "@container": "@list",
+            "@type": "xsd:string"
+          }
+        }
+      },
+      "aggregated": {
+        "@id": "ac:aggregatedProof",
+        "@type": "xsd:string"
+      }
+    }
+  },
+
+  "CLSignature2022": {
+    "@id": "ac:CLSignature2022",
+    "@context": {
+      "@version": 1.1,
+      "@protected": true,
+      "encoding": {
+        "@id": "ac:attributeEncoding",
+        "@type": "@vocab",
+        "@context": {
+          "@version": 1.1,
+          "@protected": true,
+          "auto": "ac:autoEncoding"
+        }
+      },
+      "signature": {
+        "@id": "ac:signature",
+        "@type": "xsd:string"
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
-    "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
+    "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json"
   ],
   "type": [
     "VerifiablePresentation",
@@ -11,14 +11,14 @@
     {
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
-        "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
+        "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json"
       ],
       "type": [
         "VerifiableCredential",
         "AnonCredsPresentation"
       ],
       "issuer": "did:sov:CsQY9MGeD3CQP4EyuVFo5m",
-      "issuanceDate": "2022-11-08T19:24:11Z",
+      "issuanceDate": "2022-11-09T00:04:02Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
         "schema": "CsQY9MGeD3CQP4EyuVFo5m:2:MYCO%20Biomarker:0.0.3",
@@ -74,14 +74,14 @@
     {
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
-        "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
+        "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json"
       ],
       "type": [
         "VerifiableCredential",
         "AnonCredsPresentation"
       ],
       "issuer": "did:sov:TUku9MDGa7QALbAJX4oAww",
-      "issuanceDate": "2022-11-08T19:24:11Z",
+      "issuanceDate": "2022-11-09T00:04:02Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
         "schema": "FbozHyf7j5q7TDn2s8MXZN:2:MYCO%20Consent%20Enablement:0.1.0",

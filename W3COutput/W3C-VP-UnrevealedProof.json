@@ -1,7 +1,7 @@
 {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
-    "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
+    "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json"
   ],
   "type": [
     "VerifiablePresentation",
@@ -11,14 +11,14 @@
     {
       "@context": [
         "https://www.w3.org/2018/credentials/v1",
-        "https://raw.githubusercontent.com/andrewwhitehead/anoncreds-w3c-mapping/main/schema.json"
+        "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json"
       ],
       "type": [
         "VerifiableCredential",
         "AnonCredsPresentation"
       ],
       "issuer": "did:sov:WzXgmpw6yvDdKaRcRnWxan",
-      "issuanceDate": "2022-11-08T19:24:11Z",
+      "issuanceDate": "2022-11-09T00:04:03Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
         "schema": "WzXgmpw6yvDdKaRcRnWxan:2:degree%20schema:75.57.82",

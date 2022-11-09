@@ -10,10 +10,7 @@ from math import ceil, log2
 
 CONTEXTS = [
     "https://www.w3.org/2018/credentials/v1",
-    (
-        "https://raw.githubusercontent.com/andrewwhitehead/"
-        "anoncreds-w3c-mapping/main/schema.json"
-    ),
+    "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json",
 ]
 
 SIGNATURE_PARTS = ["m_2", "a", "e", "v", "se", "c"]

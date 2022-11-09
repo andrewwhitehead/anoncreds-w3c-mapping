@@ -12,10 +12,7 @@ from typing import Tuple
 
 CONTEXTS = [
     "https://www.w3.org/2018/credentials/v1",
-    (
-        "https://raw.githubusercontent.com/andrewwhitehead/"
-        "anoncreds-w3c-mapping/main/schema.json"
-    ),
+    "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json",
 ]
 
 EQ_PROOF_PARTS = ["a_prime", "e", "v", "m", "m2"]

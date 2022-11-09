@@ -96,7 +96,7 @@ def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
                 "schema": encode_identifier(idents["schema_id"]),
                 "definition": encode_identifier(idents["cred_def_id"]),
             },
-            "credentialSubject": {"attribute": {}},
+            "credentialSubject": {"attribute": []},
             "proof": {
                 "type": "AnonCredsPresentationProof2022",
                 "credential": {
@@ -115,9 +115,9 @@ def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
             raise Exception(f"Unknown attribute referent: {reft}")
         if not isinstance(req_attr_map[reft], str):
             raise Exception(f"Expected single name for attribute referent: {reft}")
-        creds[idx]["credentialSubject"]["attribute"][req_attr_map[reft]] = {
-            "value": attr["raw"]
-        }
+        creds[idx]["credentialSubject"]["attribute"].append(
+            {"name": req_attr_map[reft], "value": attr["raw"]}
+        )
         creds[idx]["proof"]["credential"]["mapping"].setdefault(
             "revealedAttributes", {}
         )[reft] = req_attr_map[reft]
@@ -133,7 +133,9 @@ def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
         for name, attr in group["values"].items():
             if name not in req_names:
                 raise Exception(f"Unexpected attribute name: {name}")
-            creds[idx]["credentialSubject"]["attribute"][name] = {"value": attr["raw"]}
+            creds[idx]["credentialSubject"]["attribute"].append(
+                {"name": name, "value": attr["raw"]}
+            )
             mapping.append(name)
         creds[idx]["proof"]["credential"]["mapping"].setdefault(
             "revealedAttributes", {}
@@ -241,10 +243,8 @@ def encode_eq_proof(eq_proof: dict) -> str:
 def decode_eq_proof(eq_proof: str, subject: dict) -> dict:
     entries = {
         "revealed_attrs": {
-            attr: encode_indy_attrib(val["value"])
-            for (attr, val) in subject.get("credentialSubject", {})
-            .get("attribute")
-            .items()
+            attr["name"]: encode_indy_attrib(attr["value"])
+            for attr in subject.get("credentialSubject", {}).get("attribute", [])
         }
     }
 
@@ -387,6 +387,10 @@ def decode_credential_proof(pres_json: dict) -> dict:
         mapping = pres_proof["mapping"]
         eq = decode_eq_proof(pres_proof["eqProof"], subj)
         proof = {"primary_proof": {"eq_proof": eq, "ge_proofs": []}}
+        attrib_map = {
+            attr["name"]: attr["value"]
+            for attr in subj.get("credentialSubject", {}).get("attribute", [])
+        }
 
         ge_proofs = pres_proof.get("geProof")
         if ge_proofs:
@@ -419,10 +423,8 @@ def decode_credential_proof(pres_json: dict) -> dict:
                 values = {}
                 for attr in attr_names:
                     values[attr] = {
-                        "raw": subj["credentialSubject"]["attribute"][attr]["value"],
-                        "encoded": encode_indy_attrib(
-                            subj["credentialSubject"]["attribute"][attr]["value"]
-                        ),
+                        "raw": attrib_map[attr],
+                        "encoded": encode_indy_attrib(attrib_map[attr]),
                     }
                 requested["revealed_attr_groups"][reft] = {
                     "sub_proof_index": idx,
@@ -431,10 +433,8 @@ def decode_credential_proof(pres_json: dict) -> dict:
             elif isinstance(attr_names, str):
                 requested["revealed_attrs"][reft] = {
                     "sub_proof_index": idx,
-                    "raw": subj["credentialSubject"]["attribute"][attr_names]["value"],
-                    "encoded": encode_indy_attrib(
-                        subj["credentialSubject"]["attribute"][attr_names]["value"]
-                    ),
+                    "raw": attrib_map[attr_names],
+                    "encoded": encode_indy_attrib(attrib_map[attr_names]),
                 }
             else:
                 raise Exception("Invalid mapping")

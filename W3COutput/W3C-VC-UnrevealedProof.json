@@ -8,21 +8,23 @@
     "AnonCredsPresentation"
   ],
   "issuer": "self",
-  "issuanceDate": "2022-11-09T00:04:02Z",
+  "issuanceDate": "2022-11-09T01:03:21Z",
   "credentialSubject": [
     {
       "index": 0,
       "issuer": "did:sov:WzXgmpw6yvDdKaRcRnWxan",
       "schema": "WzXgmpw6yvDdKaRcRnWxan:2:degree%20schema:75.57.82",
       "definition": "WzXgmpw6yvDdKaRcRnWxan:3:CL:8:faber.agent.degree_schema",
-      "attribute": {
-        "degree": {
+      "attribute": [
+        {
+          "name": "degree",
           "value": "Maths"
         },
-        "date": {
+        {
+          "name": "date",
           "value": "2018-05-28"
         }
-      }
+      ]
     }
   ],
   "proof": {

@@ -18,36 +18,43 @@
         "AnonCredsPresentation"
       ],
       "issuer": "did:sov:CsQY9MGeD3CQP4EyuVFo5m",
-      "issuanceDate": "2022-11-09T00:04:02Z",
+      "issuanceDate": "2022-11-09T01:03:21Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
         "schema": "CsQY9MGeD3CQP4EyuVFo5m:2:MYCO%20Biomarker:0.0.3",
         "definition": "CsQY9MGeD3CQP4EyuVFo5m:3:CL:14951:MYCO_Biomarker"
       },
       "credentialSubject": {
-        "attribute": {
-          "researcher_share": {
+        "attribute": [
+          {
+            "name": "researcher_share",
             "value": "bf712cb328a92862b57f0dc806dec12a"
           },
-          "unit": {
+          {
+            "name": "unit",
             "value": "\u03bcM"
           },
-          "concentration": {
+          {
+            "name": "concentration",
             "value": "10"
           },
-          "name": {
+          {
+            "name": "name",
             "value": "Iron"
           },
-          "range": {
+          {
+            "name": "range",
             "value": "9.00-30.0"
           },
-          "collected_on": {
+          {
+            "name": "collected_on",
             "value": "2020-07-05"
           },
-          "biomarker_id": {
+          {
+            "name": "biomarker_id",
             "value": "c9ace7dc-0485-4f3f-b466-16a27a80acf1"
           }
-        }
+        ]
       },
       "proof": {
         "type": "AnonCredsPresentationProof2022",
@@ -81,18 +88,19 @@
         "AnonCredsPresentation"
       ],
       "issuer": "did:sov:TUku9MDGa7QALbAJX4oAww",
-      "issuanceDate": "2022-11-09T00:04:02Z",
+      "issuanceDate": "2022-11-09T01:03:21Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
         "schema": "FbozHyf7j5q7TDn2s8MXZN:2:MYCO%20Consent%20Enablement:0.1.0",
         "definition": "TUku9MDGa7QALbAJX4oAww:3:CL:531757:MYCO_Consent_Enablement"
       },
       "credentialSubject": {
-        "attribute": {
-          "jti_unique_identifier": {
+        "attribute": [
+          {
+            "name": "jti_unique_identifier",
             "value": "205b1ea0-7848-48d4-b52b-339122d84f62"
           }
-        }
+        ]
       },
       "proof": {
         "type": "AnonCredsPresentationProof2022",

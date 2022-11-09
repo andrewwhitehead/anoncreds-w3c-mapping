@@ -114,9 +114,10 @@ def to_w3c(cred_json: dict) -> dict:
     schema_id = cred_json["schema_id"]
     issuer = "did:sov:" + cred_def_id.split(":")[0]
     signature = encode_w3c_signature(cred_json)
-    attrs = {
-        name: {"value": entry["raw"]} for name, entry in cred_json["values"].items()
-    }
+    attrs = [
+        {"name": name, "value": entry["raw"]}
+        for name, entry in cred_json["values"].items()
+    ]
 
     # issues
     # - need @vocab or an additional @context entry & type
@@ -151,10 +152,10 @@ def from_w3c(cred_json: dict) -> dict:
     signature_parts = decode_w3c_signature(cred_json["proof"]["signature"])
 
     values = {}
-    for name, val in attrs.items():
-        values[name] = {
-            "raw": val["value"],
-            "encoded": encode_indy_attrib(val["value"]),
+    for attr in attrs:
+        values[attr["name"]] = {
+            "raw": attr["value"],
+            "encoded": encode_indy_attrib(attr["value"]),
         }
 
     return {

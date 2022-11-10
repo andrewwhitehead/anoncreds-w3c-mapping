@@ -2,8 +2,8 @@
 
 This repository contains prototype Python scripts that:
 
-- convert AnonCreds Verifiable Credentials into compliant W3C Format Verifiable Credentials and back, and
-- convert AnonCreds Presentations into compliant W3C Format Verifiable Credentials and Verifiable Presentations and back.
+- Convert AnonCreds Verifiable Credentials into compliant W3C Format Verifiable Credentials and back, and
+- Convert AnonCreds Presentations into compliant W3C Format Verifiable Presentations and back.
 
 These scripts are preliminary work in a possible transition of using the W3C Verifiable Credential Data Model Standard
 for AnonCreds verifiable credentials and presentations. As demonstrated by the back and forth nature of the
@@ -20,23 +20,16 @@ To run the generator with your own examples:
 
 To run the scripts directly, use:
 
-- `python credential_to_w3c.py <input file> [>output.json]`
-- `python presentation_to_w3c_vc.py <input file> [>output.json]`
-- `python presentation_to_w3c_vp.py <input file> [>output.json]`
+- `python credential_to_w3c.py <input file> [> output.json]`
+- `python presentation_to_w3c_vp.py <input file> [> output.json]`
 
 ## Notes
 
-- There are two `presentation` converters, one producing a W3C Data Model VC,
-  and the other a W3C Data Model VP. We're still debating what is the right way
-  to go with what an AnonCreds Presentation should be in W3C format.
-- There is no JSON-LD context created for the actual attributes of the AnonCreds
-  schema from which the VC is derived, as without changing AnonCreds, there is
-not a way for the Issuer to say where the context can be found. Of course, we
-could change that and give the issuer a way to do that, or we could
-auto-generate a compliant, inline JSON-LD context.
+- Attributes are encoded as name-value pairs. This bypasses the need to define
+  a custom JSON-LD contexts for each credential schema, as without changing AnonCreds, there is not a way for the Issuer to say where the context can be found.
 - The converter is not including the `encoded` values of the AnonCreds
-  verifiable credential attributes in the W3C formats, putting using instead a
-  flag `"encoding": "auto",`, and using converting `raw` to `encoded` data on
+  verifiable credential attributes in the W3C formats, using instead a
+  flag `"encoding": "auto",`, and converting `raw` to `encoded` data on
   the fly. The encoder matches [Aries RFC 0592 Indy Attachments section on
   Encoding
   Claims](https://github.com/hyperledger/aries-rfcs/tree/main/features/0592-indy-attachments#encoding-claims).

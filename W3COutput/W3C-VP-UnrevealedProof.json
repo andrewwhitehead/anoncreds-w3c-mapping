@@ -18,7 +18,7 @@
         "AnonCredsPresentation"
       ],
       "issuer": "did:sov:WzXgmpw6yvDdKaRcRnWxan",
-      "issuanceDate": "2022-11-09T01:03:21Z",
+      "issuanceDate": "2022-11-10T17:24:26Z",
       "credentialSchema": {
         "type": "AnonCredsDefinition",
         "schema": "WzXgmpw6yvDdKaRcRnWxan:2:degree%20schema:75.57.82",

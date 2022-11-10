@@ -1,16 +1,20 @@
 #!/bin/bash
 
-out=W3COutput
+PYTHON=${PYTHON:-python}
+OUTPUT=${OUTPUT:-W3COutput}
 
 # Generate all credentials
 for i in credentials/*; do
   echo Anoncreds Verifiable Credential: $i
-  python credential_to_w3c.py $i >${out}/W3C-VC-$(basename $i)
+  TARGET="${OUTPUT}/W3C-VC-$(basename $i)"
+  $PYTHON credential_to_w3c.py $i > $TARGET
+  echo "wrote $TARGET"
 done
 
 # Generate all presentations
 for i in presentations/*; do
   echo AnonCreds Presentation: $i
-  python presentation_to_w3c_vc.py $i >${out}/W3C-VC-$(basename $i)
-  python presentation_to_w3c_vp.py $i >${out}/W3C-VP-$(basename $i)
+  TARGET="${OUTPUT}/W3C-VP-$(basename $i)"
+  $PYTHON presentation_to_w3c_vp.py $i > $TARGET
+  echo "wrote $TARGET"
 done

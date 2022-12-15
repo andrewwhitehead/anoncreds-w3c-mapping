@@ -94,8 +94,8 @@ def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
             "issuanceDate": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "credentialSchema": {
                 "type": "AnonCredsDefinition",
+                "id": encode_identifier(idents["cred_def_id"]),
                 "schema": encode_identifier(idents["schema_id"]),
-                "definition": encode_identifier(idents["cred_def_id"]),
             },
             "credentialSubject": {},
             "proof": {
@@ -210,11 +210,11 @@ def decode_int(val: bytes) -> Tuple[int, bytes]:
 
 
 def encode_identifier(ident: str) -> str:
-    return ident.replace(" ", "%20")
+    return "did:sov:" + ident.replace(" ", "%20")
 
 
 def decode_identifier(ident: str) -> str:
-    return ident.replace("%20", " ")
+    return ident.replace("%20", " ").lstrip("did:sov:")
 
 
 def encode_eq_proof(eq_proof: dict) -> str:
@@ -406,9 +406,7 @@ def decode_credential_proof(pres_json: dict) -> dict:
         identifiers.append(
             {
                 "schema_id": decode_identifier(subj["credentialSchema"]["schema"]),
-                "cred_def_id": decode_identifier(
-                    subj["credentialSchema"]["definition"]
-                ),
+                "cred_def_id": decode_identifier(subj["credentialSchema"]["id"]),
             }
         )
 

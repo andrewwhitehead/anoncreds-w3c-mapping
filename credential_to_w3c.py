@@ -27,11 +27,11 @@ def base64_decode(val: str) -> bytes:
 
 
 def encode_identifier(ident: str) -> str:
-    return ident.replace(" ", "%20")
+    return "did:sov:" + ident.replace(" ", "%20")
 
 
 def decode_identifier(ident: str) -> str:
-    return ident.replace("%20", " ")
+    return ident.replace("%20", " ").lstrip("did:sov:")
 
 
 def encode_w3c_signature(cred_json: dict) -> str:
@@ -111,9 +111,9 @@ def encode_indy_attrib(orig) -> str:
 
 def to_w3c(cred_json: dict) -> dict:
     """Convert a classic AnonCreds credential to W3C-compatible format."""
-    cred_def_id = cred_json["cred_def_id"]
-    schema_id = cred_json["schema_id"]
-    issuer = "did:sov:" + cred_def_id.split(":")[0]
+    issuer = "did:sov:" + cred_json["cred_def_id"].split(":")[0]
+    cred_def_id = encode_identifier(cred_json["cred_def_id"])
+    schema_id = encode_identifier(cred_json["schema_id"])
     signature = encode_w3c_signature(cred_json)
     attrs = {name: entry["raw"] for name, entry in cred_json["values"].items()}
 
@@ -126,8 +126,8 @@ def to_w3c(cred_json: dict) -> dict:
         "issuanceDate": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
         "credentialSchema": {
             "type": "AnonCredsDefinition",
+            "id": cred_def_id,
             "schema": schema_id,
-            "definition": cred_def_id,
         },
         "credentialSubject": attrs,
         "proof": {
@@ -142,8 +142,8 @@ def from_w3c(cred_json: dict) -> dict:
     """Convert a W3C-compatible credential to AnonCreds classic format."""
     # FIXME validate context, add error handling
 
-    schema_id = cred_json["credentialSchema"]["schema"]
-    cred_def_id = cred_json["credentialSchema"]["definition"]
+    schema_id = decode_identifier(cred_json["credentialSchema"]["schema"])
+    cred_def_id = decode_identifier(cred_json["credentialSchema"]["id"])
     attrs = cred_json["credentialSubject"]
     signature_parts = decode_w3c_signature(cred_json["proof"]["signature"])
 

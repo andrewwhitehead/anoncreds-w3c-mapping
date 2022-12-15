@@ -11,6 +11,7 @@ from math import ceil, log2
 CONTEXTS = [
     "https://www.w3.org/2018/credentials/v1",
     "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json",
+    {"@vocab": "urn:anoncreds:attributes#"},
 ]
 
 SIGNATURE_PARTS = ["m_2", "a", "e", "v", "se", "c"]
@@ -114,13 +115,8 @@ def to_w3c(cred_json: dict) -> dict:
     schema_id = cred_json["schema_id"]
     issuer = "did:sov:" + cred_def_id.split(":")[0]
     signature = encode_w3c_signature(cred_json)
-    attrs = [
-        {"name": name, "value": entry["raw"]}
-        for name, entry in cred_json["values"].items()
-    ]
+    attrs = {name: entry["raw"] for name, entry in cred_json["values"].items()}
 
-    # issues
-    # - need @vocab or an additional @context entry & type
     # - limitations on attrib names, like `id` or `@type`?
 
     return {
@@ -133,7 +129,7 @@ def to_w3c(cred_json: dict) -> dict:
             "schema": schema_id,
             "definition": cred_def_id,
         },
-        "credentialSubject": {"attribute": attrs},
+        "credentialSubject": attrs,
         "proof": {
             "type": "CLSignature2022",
             "encoding": "auto",
@@ -148,14 +144,14 @@ def from_w3c(cred_json: dict) -> dict:
 
     schema_id = cred_json["credentialSchema"]["schema"]
     cred_def_id = cred_json["credentialSchema"]["definition"]
-    attrs = cred_json["credentialSubject"]["attribute"]
+    attrs = cred_json["credentialSubject"]
     signature_parts = decode_w3c_signature(cred_json["proof"]["signature"])
 
     values = {}
-    for attr in attrs:
-        values[attr["name"]] = {
-            "raw": attr["value"],
-            "encoded": encode_indy_attrib(attr["value"]),
+    for attr_name, attr_value in attrs.items():
+        values[attr_name] = {
+            "raw": attr_value,
+            "encoded": encode_indy_attrib(attr_value),
         }
 
     return {

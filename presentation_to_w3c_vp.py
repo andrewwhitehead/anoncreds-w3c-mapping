@@ -13,6 +13,7 @@ from typing import Tuple
 CONTEXTS = [
     "https://www.w3.org/2018/credentials/v1",
     "https://andrewwhitehead.github.io/anoncreds-w3c-mapping/schema.json",
+    {"@vocab": "urn:anoncreds:attributes#"},
 ]
 
 EQ_PROOF_PARTS = ["a_prime", "e", "v", "m", "m2"]
@@ -96,7 +97,7 @@ def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
                 "schema": encode_identifier(idents["schema_id"]),
                 "definition": encode_identifier(idents["cred_def_id"]),
             },
-            "credentialSubject": {"attribute": []},
+            "credentialSubject": {},
             "proof": {
                 "type": "AnonCredsPresentationProof2022",
                 "credential": {
@@ -115,9 +116,7 @@ def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
             raise Exception(f"Unknown attribute referent: {reft}")
         if not isinstance(req_attr_map[reft], str):
             raise Exception(f"Expected single name for attribute referent: {reft}")
-        creds[idx]["credentialSubject"]["attribute"].append(
-            {"name": req_attr_map[reft], "value": attr["raw"]}
-        )
+        creds[idx]["credentialSubject"][req_attr_map[reft]] = attr["raw"]
         creds[idx]["proof"]["credential"]["mapping"].setdefault(
             "revealedAttributes", {}
         )[reft] = req_attr_map[reft]
@@ -133,9 +132,7 @@ def encode_credentials(req_json: dict, pres_json: dict, proofs: list) -> list:
         for name, attr in group["values"].items():
             if name not in req_names:
                 raise Exception(f"Unexpected attribute name: {name}")
-            creds[idx]["credentialSubject"]["attribute"].append(
-                {"name": name, "value": attr["raw"]}
-            )
+            creds[idx]["credentialSubject"][name] = attr["raw"]
             mapping.append(name)
         creds[idx]["proof"]["credential"]["mapping"].setdefault(
             "revealedAttributes", {}
@@ -243,8 +240,8 @@ def encode_eq_proof(eq_proof: dict) -> str:
 def decode_eq_proof(eq_proof: str, subject: dict) -> dict:
     entries = {
         "revealed_attrs": {
-            attr["name"]: encode_indy_attrib(attr["value"])
-            for attr in subject.get("credentialSubject", {}).get("attribute", [])
+            name: encode_indy_attrib(value)
+            for (name, value) in subject.get("credentialSubject", {}).items()
         }
     }
 
@@ -387,10 +384,7 @@ def decode_credential_proof(pres_json: dict) -> dict:
         mapping = pres_proof["mapping"]
         eq = decode_eq_proof(pres_proof["eqProof"], subj)
         proof = {"primary_proof": {"eq_proof": eq, "ge_proofs": []}}
-        attrib_map = {
-            attr["name"]: attr["value"]
-            for attr in subj.get("credentialSubject", {}).get("attribute", [])
-        }
+        attrib_map = subj.get("credentialSubject", {})
 
         ge_proofs = pres_proof.get("geProof")
         if ge_proofs:
@@ -470,7 +464,7 @@ def to_w3c(req_json: dict, pres_json: dict) -> dict:
     agg = encode_aggregated_proof(pres_json)
 
     return {
-        "@context": CONTEXTS.copy(),
+        "@context": CONTEXTS[:2].copy(),
         "type": ["VerifiablePresentation", "AnonCredsPresentation"],
         # "holder": { .. },
         "verifiableCredential": creds,

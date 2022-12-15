@@ -5,27 +5,6 @@
     "ac": "https://anoncreds.example/2022/ns#",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
 
-    "attribute": {
-      "@id": "ac:attribute",
-      "@container": "@set",
-      "@context": {
-        "@version": 1.1,
-        "@protected": true,
-        "name": {
-          "@id": "ac:attributeName",
-          "@type": "xsd:string"
-        },
-        "encoding": {
-          "@id": "ac:attributeEncoding",
-          "@type": "@id"
-        },
-        "value": {
-          "@id": "ac:attributeValue",
-          "@type": "xsd:string"
-        }
-      }
-    },
-
     "AnonCredsCredential": "ac:AnonCredsCredential",
 
     "AnonCredsDefinition": {
